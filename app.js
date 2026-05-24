@@ -406,14 +406,7 @@ function renderStudentPetCenter() {
     wrapper.appendChild(emojiDiv);
   }
 
-  // 尝试渲染 3D WebGL 舞台
-  const use3D = initThreeDPetViewer("active-pet-3d-container", stats, true, petInst);
-  
-  if (use3D) {
-    container3D.style.display = "block";
-    spriteBox.style.display = "none";
-    emojiDiv.style.display = "none";
-  } else {
+  const trigger2DFallback = () => {
     container3D.style.display = "none";
     if (stats.fullBody.length <= 4) {
       spriteBox.style.display = "none";
@@ -424,17 +417,11 @@ function renderStudentPetCenter() {
       emojiDiv.style.display = "none";
       spriteBox.src = stats.fullBody;
     }
-  }
-
-  // 渲染皮肤装扮 (附件饰品)
-  const accessoryContainer = document.getElementById("pet-accessory-container");
-  if (use3D) {
-    // 3D 渲染器会自动将饰品作为 3D Sprite 绘制，此处隐藏 2D HTML 饰品
-    if (accessoryContainer) accessoryContainer.innerHTML = "";
-  } else {
+    // 渲染 2D 皮肤装扮 (附件饰品)
+    const accessoryContainer = document.getElementById("pet-accessory-container");
     if (accessoryContainer) {
       accessoryContainer.innerHTML = "";
-      if (petInst.accessories && petInst.accessories.length > 0) {
+      if (petInst && petInst.accessories && petInst.accessories.length > 0) {
         const shopTable = getShopTable();
         petInst.accessories.forEach(accId => {
           const item = shopTable.find(i => i.id === accId);
@@ -451,6 +438,20 @@ function renderStudentPetCenter() {
         });
       }
     }
+  };
+
+  // 尝试渲染 3D WebGL 舞台
+  const use3D = initThreeDPetViewer("active-pet-3d-container", stats, true, petInst, trigger2DFallback);
+  
+  if (use3D) {
+    container3D.style.display = "block";
+    spriteBox.style.display = "none";
+    emojiDiv.style.display = "none";
+    // 3D 渲染器会自动将饰品作为 3D Sprite 绘制，此处隐藏 2D HTML 饰品
+    const accessoryContainer = document.getElementById("pet-accessory-container");
+    if (accessoryContainer) accessoryContainer.innerHTML = "";
+  } else {
+    trigger2DFallback();
   }
 
   // 发光底色
@@ -1576,15 +1577,20 @@ function renderEncyclopediaDetail(petId) {
 
   // 动态启动 3D WebGL 舞台
   setTimeout(() => {
-    const use3D = initThreeDPetViewer("encyclopedia-3d-container", pet, true, null);
     const canvas3D = document.getElementById("encyclopedia-3d-container");
     const container = document.getElementById("encyclopedia-main-img-container");
+    const trigger2DFallback = () => {
+      if (canvas3D && container) {
+        canvas3D.style.display = "none";
+        container.style.display = "flex";
+      }
+    };
+    const use3D = initThreeDPetViewer("encyclopedia-3d-container", pet, true, null, trigger2DFallback);
     if (use3D && canvas3D && container) {
       canvas3D.style.display = "block";
       container.style.display = "none";
-    } else if (canvas3D && container) {
-      canvas3D.style.display = "none";
-      container.style.display = "flex";
+    } else {
+      trigger2DFallback();
     }
   }, 50);
 }
@@ -2284,13 +2290,50 @@ document.addEventListener("DOMContentLoaded", () => {
 // 6.7 3D WebGL 舞台及宠物重构引擎 (Three.js 3D WebGL Engine)
 // ============================================================================
 
+// Helper to determine if a URL is cross-origin
+function isCrossOrigin(url) {
+  if (!url) return false;
+  if (typeof url !== "string") return false;
+  if (url.length <= 4) return false;
+  if (url.startsWith("data:") || url.startsWith("blob:")) return false;
+  try {
+    const loc = window.location;
+    const urlObj = new URL(url, loc.href);
+    return urlObj.origin !== loc.origin;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Helper to check if WebGL texture loading is allowed for a given resource URL
+function canUseWebGLTexture(url) {
+  if (!url) return false;
+  if (typeof url !== "string") return false;
+  if (url.length <= 4) return true; // Emojis and short texts are drawn via local Canvas without file load (safe)
+  if (window.location.protocol === "file:") {
+    // Under file://, local image file texture loading is blocked by browser security
+    return false;
+  }
+  return true;
+}
+
 // 全局 3D 渲染器缓存，避免重复创建或渲染器冲突
 let activeThreeDInstances = {};
 
-function initThreeDPetViewer(containerId, petStats, useThreeViews = true, petInstance = null) {
+function initThreeDPetViewer(containerId, petStats, useThreeViews = true, petInstance = null, onFallback = null) {
   // 1. 检查 Three.js 是否成功加载
   if (typeof THREE === "undefined") {
     console.warn("Three.js libraries not loaded. Falling back to 2D illustration.");
+    return false;
+  }
+
+  // 2. 检查是否能在 WebGL 中载入该宠物资源的纹理 (在 file:// 下，图片资源直接走 2D 回退，emoji 则允许 3D)
+  const targetUrl = petStats.fullBody || petStats.avatar;
+  const targetThreeView = useThreeViews && petStats.threeViews && (petStats.threeViews.front || petStats.threeViews.side || petStats.threeViews.back) ? petStats.threeViews.front : null;
+  const mainUrl = targetThreeView || targetUrl;
+  
+  if (!canUseWebGLTexture(mainUrl)) {
+    console.warn("WebGL texture loading is restricted on this protocol (e.g. file://) for image file: " + mainUrl + ". Falling back to 2D.");
     return false;
   }
 
@@ -2504,27 +2547,38 @@ function initThreeDPetViewer(containerId, petStats, useThreeViews = true, petIns
       petGroup.add(plane);
     } else {
       const loader = new THREE.TextureLoader();
-      loader.load(imgUrl, (texture) => {
-        let aspect = 1.0;
-        if (texture.image) {
-          aspect = texture.image.width / texture.image.height;
-        }
-        const planeHeight = 2.1;
-        const planeWidth = planeHeight * aspect;
+      if (window.location.protocol !== "file:") {
+        loader.setCrossOrigin(isCrossOrigin(imgUrl) ? "anonymous" : "");
+      }
+      loader.load(
+        imgUrl,
+        (texture) => {
+          let aspect = 1.0;
+          if (texture.image) {
+            aspect = texture.image.width / texture.image.height;
+          }
+          const planeHeight = 2.1;
+          const planeWidth = planeHeight * aspect;
 
-        const mat = new THREE.MeshStandardMaterial({
-          map: texture,
-          transparent: true,
-          side: THREE.DoubleSide,
-          alphaTest: 0.2,
-          roughness: 0.5
-        });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), mat);
-        plane.position.y = planeHeight / 2;
-        plane.castShadow = true;
-        plane.receiveShadow = true;
-        petGroup.add(plane);
-      });
+          const mat = new THREE.MeshStandardMaterial({
+            map: texture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            alphaTest: 0.2,
+            roughness: 0.5
+          });
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), mat);
+          plane.position.y = planeHeight / 2;
+          plane.castShadow = true;
+          plane.receiveShadow = true;
+          petGroup.add(plane);
+        },
+        undefined,
+        (err) => {
+          console.error("Failed to load 2D billboard texture in WebGL:", imgUrl, err);
+          if (onFallback) onFallback();
+        }
+      );
     }
   }
 
@@ -2600,28 +2654,38 @@ function loadThreeViewsTextures(threeViews, callback) {
 
   if (front && !side && !back) {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (window.location.protocol !== "file:" && isCrossOrigin(front)) {
+      img.crossOrigin = "anonymous";
+    }
     img.onload = () => {
-      const segmentWidth = Math.floor(img.width / 3);
-      const height = img.height;
+      try {
+        const segmentWidth = Math.floor(img.width / 3);
+        const height = img.height;
 
-      const textures = {};
-      const faceNames = ['front', 'side', 'back'];
+        const textures = {};
+        const faceNames = ['front', 'side', 'back'];
 
-      faceNames.forEach((name, index) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = segmentWidth;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, index * segmentWidth, 0, segmentWidth, height, 0, 0, segmentWidth, height);
+        faceNames.forEach((name, index) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = segmentWidth;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, index * segmentWidth, 0, segmentWidth, height, 0, 0, segmentWidth, height);
 
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        textures[name] = texture;
-      });
+          // Test if canvas is tainted
+          ctx.getImageData(0, 0, 1, 1);
 
-      callback(textures);
+          const texture = new THREE.CanvasTexture(canvas);
+          texture.minFilter = THREE.LinearFilter;
+          texture.magFilter = THREE.LinearFilter;
+          textures[name] = texture;
+        });
+
+        callback(textures);
+      } catch (err) {
+        console.error("Failed to extract threeViews textures (possibly CORS/file:// restrictions):", err);
+        callback(null);
+      }
     };
     img.onerror = () => {
       console.error("Failed to load combined threeViews image:", front);
@@ -2631,6 +2695,9 @@ function loadThreeViewsTextures(threeViews, callback) {
   } else {
     const manager = new THREE.LoadingManager();
     const loader = new THREE.TextureLoader(manager);
+    if (window.location.protocol !== "file:") {
+      loader.setCrossOrigin(isCrossOrigin(front || side || back) ? "anonymous" : "");
+    }
     const textures = { front: null, side: null, back: null };
 
     if (front) loader.load(front, tex => textures.front = tex);
@@ -2648,6 +2715,3 @@ function loadThreeViewsTextures(threeViews, callback) {
     };
   }
 }
-
-  switchRole("student");
-});
