@@ -1255,3 +1255,13 @@ textarea.form-control {
   }
 }
 
+#active-pet-3d-container canvas, #encyclopedia-3d-container canvas {
+  cursor: grab;
+  outline: none;
+}
+
+#active-pet-3d-container canvas:active, #encyclopedia-3d-container canvas:active {
+  cursor: grabbing;
+}
+
+

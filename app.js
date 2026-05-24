@@ -379,11 +379,24 @@ function renderStudentPetCenter() {
   document.getElementById("active-pet-spd").innerText = stats.spd;
   document.getElementById("active-pet-power").innerText = stats.power;
 
-  // 4. 立绘与背景发光
+  // 4. 立绘与背景发光 (3D WebGL / 2D fallback)
   const spriteBox = document.getElementById("active-pet-sprite");
-  // 采用 Emoji 动态字渲染，而不是图片，由于没有静态图资产，把 Emoji 写在 src 处不可行，
-  // 我们检测是否是 Emoji，如果是直接将其包裹或通过生成 Canvas 的方式；为了精美，直接将 Emoji 塞入父盒子，并隐藏原生 img。
   const wrapper = document.querySelector(".pet-avatar-wrapper");
+  
+  // 确保 3D 渲染容器存在
+  let container3D = document.getElementById("active-pet-3d-container");
+  if (!container3D) {
+    container3D = document.createElement("div");
+    container3D.id = "active-pet-3d-container";
+    container3D.style.width = "100%";
+    container3D.style.height = "100%";
+    container3D.style.position = "absolute";
+    container3D.style.top = "0";
+    container3D.style.left = "0";
+    container3D.style.zIndex = "2";
+    wrapper.appendChild(container3D);
+  }
+
   let emojiDiv = wrapper.querySelector(".emoji-renderer");
   if (!emojiDiv) {
     emojiDiv = document.createElement("div");
@@ -392,37 +405,52 @@ function renderStudentPetCenter() {
     emojiDiv.style.userSelect = "none";
     wrapper.appendChild(emojiDiv);
   }
+
+  // 尝试渲染 3D WebGL 舞台
+  const use3D = initThreeDPetViewer("active-pet-3d-container", stats, true, petInst);
   
-  if (stats.fullBody.length <= 4) {
-    // 它是 Emoji
+  if (use3D) {
+    container3D.style.display = "block";
     spriteBox.style.display = "none";
-    emojiDiv.style.display = "block";
-    emojiDiv.innerText = stats.fullBody;
-  } else {
-    // 它可能是一个 URL，尝试展示 img
-    spriteBox.style.display = "block";
     emojiDiv.style.display = "none";
-    spriteBox.src = stats.fullBody;
+  } else {
+    container3D.style.display = "none";
+    if (stats.fullBody.length <= 4) {
+      spriteBox.style.display = "none";
+      emojiDiv.style.display = "block";
+      emojiDiv.innerText = stats.fullBody;
+    } else {
+      spriteBox.style.display = "block";
+      emojiDiv.style.display = "none";
+      spriteBox.src = stats.fullBody;
+    }
   }
 
   // 渲染皮肤装扮 (附件饰品)
   const accessoryContainer = document.getElementById("pet-accessory-container");
-  accessoryContainer.innerHTML = "";
-  if (petInst.accessories && petInst.accessories.length > 0) {
-    const shopTable = getShopTable();
-    petInst.accessories.forEach(accId => {
-      const item = shopTable.find(i => i.id === accId);
-      if (item) {
-        const accSpan = document.createElement("span");
-        accSpan.className = "pet-accessory";
-        accSpan.innerText = item.icon;
-        accSpan.style.fontSize = "40px";
-        accSpan.style.position = "absolute";
-        accSpan.style.top = "-20px";
-        accSpan.style.left = "40px";
-        accessoryContainer.appendChild(accSpan);
+  if (use3D) {
+    // 3D 渲染器会自动将饰品作为 3D Sprite 绘制，此处隐藏 2D HTML 饰品
+    if (accessoryContainer) accessoryContainer.innerHTML = "";
+  } else {
+    if (accessoryContainer) {
+      accessoryContainer.innerHTML = "";
+      if (petInst.accessories && petInst.accessories.length > 0) {
+        const shopTable = getShopTable();
+        petInst.accessories.forEach(accId => {
+          const item = shopTable.find(i => i.id === accId);
+          if (item) {
+            const accSpan = document.createElement("span");
+            accSpan.className = "pet-accessory";
+            accSpan.innerText = item.icon;
+            accSpan.style.fontSize = "40px";
+            accSpan.style.position = "absolute";
+            accSpan.style.top = "-20px";
+            accSpan.style.left = "40px";
+            accessoryContainer.appendChild(accSpan);
+          }
+        });
       }
-    });
+    }
   }
 
   // 发光底色
@@ -630,7 +658,11 @@ function triggerPetEvolution(currentNodeAsset) {
     petInst.name = targetAsset.name;
   }
 
-  // 激发进化觉醒 CSS 动效
+  // 激发进化觉醒 3D / CSS 动效
+  if (activeThreeDInstances["active-pet-3d-container"]) {
+    activeThreeDInstances["active-pet-3d-container"].triggerEvolutionFlash();
+  }
+
   const petSprite = document.getElementById("active-pet-sprite");
   const emojiRenderer = document.querySelector(".emoji-renderer");
   
@@ -1468,8 +1500,10 @@ function renderEncyclopediaDetail(petId) {
     <div class="encyclopedia-hero" style="display: flex; gap: 24px; align-items: stretch;">
       <!-- Hero Image Box -->
       <div class="glass-panel" id="encyclopedia-main-img-box" style="flex: 1.2; display: flex; align-items: center; justify-content: center; min-height: 280px; background: rgba(0,0,0,0.2); position: relative; border-radius: var(--radius-md); overflow: hidden;">
+        <!-- 3D 渲染容器 -->
+        <div id="encyclopedia-3d-container" style="width: 100%; height: 100%; position: absolute; top:0; left:0; z-index:2;"></div>
         <!-- 主立绘图 -->
-        <div id="encyclopedia-main-img-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div id="encyclopedia-main-img-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; z-index:1;">
           ${renderEncyclopediaMainImage(allImages[0] ? allImages[0].url : pet.avatar)}
         </div>
       </div>
@@ -1522,7 +1556,7 @@ function renderEncyclopediaDetail(petId) {
       </h3>
       <div class="gallery-thumb-grid" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px;">
         ${allImages.map((img, idx) => `
-          <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchEncyclopediaMainImg('${img.url.replace(/'/g, "\\'")}', this)" style="width: 70px; height: 70px; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; overflow: hidden; flex-shrink: 0;">
+          <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchEncyclopediaMainImg('${img.url.replace(/'/g, "\\'")}', this, '${img.type}')" style="width: 70px; height: 70px; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; overflow: hidden; flex-shrink: 0;">
             ${img.url.length > 4 
               ? `<img src="${img.url}" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;">` 
               : `<span style="font-size: 32px;">${img.url}</span>`
@@ -1539,6 +1573,20 @@ function renderEncyclopediaDetail(petId) {
       ${renderThreeViewsSection(pet.threeViews)}
     </div>
   `;
+
+  // 动态启动 3D WebGL 舞台
+  setTimeout(() => {
+    const use3D = initThreeDPetViewer("encyclopedia-3d-container", pet, true, null);
+    const canvas3D = document.getElementById("encyclopedia-3d-container");
+    const container = document.getElementById("encyclopedia-main-img-container");
+    if (use3D && canvas3D && container) {
+      canvas3D.style.display = "block";
+      container.style.display = "none";
+    } else if (canvas3D && container) {
+      canvas3D.style.display = "none";
+      container.style.display = "flex";
+    }
+  }, 50);
 }
 
 function renderEncyclopediaMainImage(urlOrEmoji) {
@@ -1607,14 +1655,22 @@ function renderThreeViewsSection(threeViews) {
   }
 }
 
-function switchEncyclopediaMainImg(url, thumbElement) {
+function switchEncyclopediaMainImg(url, thumbElement, type) {
   const container = document.getElementById("encyclopedia-main-img-container");
-  if (!container) return;
+  const canvas3D = document.getElementById("encyclopedia-3d-container");
+  if (!container || !canvas3D) return;
   
   document.querySelectorAll(".gallery-thumb").forEach(el => el.classList.remove("active"));
   if (thumbElement) thumbElement.classList.add("active");
   
-  container.innerHTML = renderEncyclopediaMainImage(url);
+  if (type === "fullBody" || type === "avatar") {
+    canvas3D.style.display = "block";
+    container.style.display = "none";
+  } else {
+    canvas3D.style.display = "none";
+    container.style.display = "flex";
+    container.innerHTML = renderEncyclopediaMainImage(url);
+  }
 }
 
 function openImageModal(imgUrl) {
@@ -2221,5 +2277,377 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // 执行全局初始化角色加载
   // ==========================================
+  switchRole("student");
+});
+
+// ============================================================================
+// 6.7 3D WebGL 舞台及宠物重构引擎 (Three.js 3D WebGL Engine)
+// ============================================================================
+
+// 全局 3D 渲染器缓存，避免重复创建或渲染器冲突
+let activeThreeDInstances = {};
+
+function initThreeDPetViewer(containerId, petStats, useThreeViews = true, petInstance = null) {
+  // 1. 检查 Three.js 是否成功加载
+  if (typeof THREE === "undefined") {
+    console.warn("Three.js libraries not loaded. Falling back to 2D illustration.");
+    return false;
+  }
+
+  const container = document.getElementById(containerId);
+  if (!container) return false;
+
+  // 清空容器内旧的 Canvas 或立绘
+  container.innerHTML = "";
+  
+  // 停止容器上原有的 3D 实例动画，避免内存泄露
+  if (activeThreeDInstances[containerId]) {
+    cancelAnimationFrame(activeThreeDInstances[containerId].animationId);
+    if (activeThreeDInstances[containerId].renderer) {
+      activeThreeDInstances[containerId].renderer.dispose();
+    }
+    delete activeThreeDInstances[containerId];
+  }
+
+  const width = container.clientWidth || 300;
+  const height = container.clientHeight || 280;
+
+  // 2. 场景 & 渲染器设置
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x1a1a24, 0.04);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  // 3. 相机设置
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  camera.position.set(0, 2.3, 6.0);
+
+  // 4. 控制器设置
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2 + 0.1;
+  controls.minDistance = 3;
+  controls.maxDistance = 12;
+  controls.target.set(0, 0.8, 0);
+
+  // 5. 光源配置 (双向高质感光影)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+  scene.add(ambientLight);
+
+  const mainLight = new THREE.DirectionalLight(0xffffff, 0.95);
+  mainLight.position.set(5, 8, 5);
+  mainLight.castShadow = true;
+  mainLight.shadow.mapSize.width = 1024;
+  mainLight.shadow.mapSize.height = 1024;
+  mainLight.shadow.bias = -0.001;
+  scene.add(mainLight);
+
+  const fillLight = new THREE.DirectionalLight(0x00e5ff, 0.35);
+  fillLight.position.set(-5, 3, -5);
+  scene.add(fillLight);
+
+  // 6. 底层发光基座 (Pedestal)
+  const pedestalGeo = new THREE.CylinderGeometry(1.6, 1.8, 0.25, 32);
+  const elColor = petStats.element === "grass" ? 0x4caf50 :
+                  petStats.element === "fire" ? 0xff5252 :
+                  petStats.element === "water" ? 0x2196f3 :
+                  petStats.element === "electric" ? 0xffeb3b : 0xffa726;
+
+  const pedestalMat = new THREE.MeshStandardMaterial({
+    color: 0x1f202c,
+    roughness: 0.2,
+    metalness: 0.8,
+    bumpScale: 0.05
+  });
+  const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
+  pedestal.position.y = -0.125;
+  pedestal.receiveShadow = true;
+  scene.add(pedestal);
+
+  // 基座光环边缘 (Ring)
+  const ringGeo = new THREE.RingGeometry(1.55, 1.6, 32);
+  const ringMat = new THREE.MeshBasicMaterial({ color: elColor, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = 0.13;
+  pedestal.add(ring);
+
+  // 7. 加载宠物核心模型
+  let petGroup = new THREE.Group();
+  scene.add(petGroup);
+
+  // 粒子效果数组
+  let particles = [];
+  const particleCount = 25;
+  const particleGeo = new THREE.BoxGeometry(0.06, 0.06, 0.06);
+  const particleMat = new THREE.MeshBasicMaterial({
+    color: elColor,
+    transparent: true,
+    opacity: 0.6
+  });
+
+  for (let i = 0; i < particleCount; i++) {
+    const p = new THREE.Mesh(particleGeo, particleMat);
+    p.position.set(
+      (Math.random() - 0.5) * 2.2,
+      Math.random() * 2,
+      (Math.random() - 0.5) * 2.2
+    );
+    p.userData = {
+      speedY: 0.01 + Math.random() * 0.015,
+      speedRot: (Math.random() - 0.5) * 0.05,
+      startY: p.position.y
+    };
+    scene.add(p);
+    particles.push(p);
+  }
+
+  // 渲染 3D 背包饰品 (Three.js Sprites)
+  if (petInstance && petInstance.accessories && petInstance.accessories.length > 0) {
+    const shopTable = getShopTable();
+    petInstance.accessories.forEach(accId => {
+      const item = shopTable.find(i => i.id === accId);
+      if (item && item.icon) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext("2d");
+        ctx.font = "80px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(item.icon, 64, 64);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        
+        // 放置在宠物头部上方
+        sprite.position.set(0, 2.3, 0);
+        sprite.scale.set(0.8, 0.8, 0.8);
+        petGroup.add(sprite);
+      }
+    });
+  }
+
+  // 8. 根据三视图资产，动态截取渲染
+  const hasThreeViews = useThreeViews && petStats.threeViews && (petStats.threeViews.front || petStats.threeViews.side || petStats.threeViews.back);
+
+  if (hasThreeViews) {
+    loadThreeViewsTextures(petStats.threeViews, (textures) => {
+      if (!textures) {
+        create2DBillboard(petStats.fullBody || petStats.avatar);
+        return;
+      }
+
+      let aspect = 1.0;
+      if (textures.front && textures.front.image) {
+        aspect = textures.front.image.width / textures.front.image.height;
+      }
+      
+      const boxHeight = 2.0;
+      const boxWidth = boxHeight * aspect;
+      const boxDepth = boxWidth * 0.85;
+      
+      const boxGeo = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+      const matParams = { roughness: 0.6, metalness: 0.1, transparent: true, alphaTest: 0.2 };
+      
+      const texSideL = textures.side.clone();
+      texSideL.needsUpdate = true;
+      
+      const texSideR = textures.side.clone();
+      texSideR.wrapS = THREE.RepeatWrapping;
+      texSideR.repeat.x = -1;
+      texSideR.needsUpdate = true;
+
+      const materials = [
+        new THREE.MeshStandardMaterial({ map: texSideR, ...matParams }), // Right
+        new THREE.MeshStandardMaterial({ map: texSideL, ...matParams }), // Left
+        new THREE.MeshStandardMaterial({ color: elColor, roughness: 0.9, transparent: true, opacity: 0.1 }), // Top
+        new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 }), // Bottom
+        new THREE.MeshStandardMaterial({ map: textures.front, ...matParams }), // Front
+        new THREE.MeshStandardMaterial({ map: textures.back || textures.front, ...matParams })  // Back
+      ];
+
+      const petMesh = new THREE.Mesh(boxGeo, materials);
+      petMesh.position.y = boxHeight / 2;
+      petMesh.castShadow = true;
+      petMesh.receiveShadow = true;
+      petGroup.add(petMesh);
+    });
+  } else {
+    create2DBillboard(petStats.fullBody || petStats.avatar);
+  }
+
+  function create2DBillboard(imgUrl) {
+    if (!imgUrl || imgUrl.length <= 4) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext("2d");
+      ctx.font = "bold 150px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(imgUrl || "🐾", 128, 128);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.MeshStandardMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, roughness: 0.5 });
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.8), mat);
+      plane.position.y = 0.9;
+      plane.castShadow = true;
+      petGroup.add(plane);
+    } else {
+      const loader = new THREE.TextureLoader();
+      loader.load(imgUrl, (texture) => {
+        let aspect = 1.0;
+        if (texture.image) {
+          aspect = texture.image.width / texture.image.height;
+        }
+        const planeHeight = 2.1;
+        const planeWidth = planeHeight * aspect;
+
+        const mat = new THREE.MeshStandardMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+          alphaTest: 0.2,
+          roughness: 0.5
+        });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeHeight), mat);
+        plane.position.y = planeHeight / 2;
+        plane.castShadow = true;
+        plane.receiveShadow = true;
+        petGroup.add(plane);
+      });
+    }
+  }
+
+  let clock = new THREE.Clock();
+  let flashAmount = 0.0;
+  
+  function animate() {
+    const animationId = requestAnimationFrame(animate);
+    
+    if (activeThreeDInstances[containerId]) {
+      activeThreeDInstances[containerId].animationId = animationId;
+    }
+
+    const elapsed = clock.getElapsedTime();
+
+    pedestal.rotation.y += 0.005;
+
+    petGroup.position.y = Math.sin(elapsed * 1.5) * 0.08 + 0.05;
+    petGroup.rotation.z = Math.sin(elapsed * 1.2) * 0.02;
+    petGroup.rotation.y = Math.sin(elapsed * 0.8) * 0.03;
+
+    particles.forEach(p => {
+      p.position.y += p.userData.speedY;
+      p.rotation.x += p.userData.speedRot;
+      p.rotation.y += p.userData.speedRot;
+      
+      if (p.position.y > p.userData.startY + 2.0) {
+        p.position.y = p.userData.startY;
+        p.position.x = (Math.random() - 0.5) * 2.2;
+        p.position.z = (Math.random() - 0.5) * 2.2;
+      }
+    });
+
+    if (flashAmount > 0.01) {
+      flashAmount *= 0.92;
+      mainLight.intensity = 0.95 + flashAmount * 10;
+      ambientLight.color.setRGB(1.0 + flashAmount, 1.0 + flashAmount, 1.0 + flashAmount);
+    } else {
+      mainLight.intensity = 0.95;
+      ambientLight.color.setRGB(1, 1, 1);
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  activeThreeDInstances[containerId] = {
+    renderer,
+    scene,
+    animationId: null,
+    triggerEvolutionFlash: () => {
+      flashAmount = 3.0;
+    }
+  };
+
+  animate();
+
+  const resizeObserver = new ResizeObserver(() => {
+    if (!container.contains(renderer.domElement)) return;
+    const w = container.clientWidth || 300;
+    const h = container.clientHeight || 280;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+  resizeObserver.observe(container);
+
+  return true;
+}
+
+function loadThreeViewsTextures(threeViews, callback) {
+  const { front, side, back } = threeViews;
+
+  if (front && !side && !back) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const segmentWidth = Math.floor(img.width / 3);
+      const height = img.height;
+
+      const textures = {};
+      const faceNames = ['front', 'side', 'back'];
+
+      faceNames.forEach((name, index) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = segmentWidth;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, index * segmentWidth, 0, segmentWidth, height, 0, 0, segmentWidth, height);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        textures[name] = texture;
+      });
+
+      callback(textures);
+    };
+    img.onerror = () => {
+      console.error("Failed to load combined threeViews image:", front);
+      callback(null);
+    };
+    img.src = front;
+  } else {
+    const manager = new THREE.LoadingManager();
+    const loader = new THREE.TextureLoader(manager);
+    const textures = { front: null, side: null, back: null };
+
+    if (front) loader.load(front, tex => textures.front = tex);
+    if (side) loader.load(side, tex => textures.side = tex);
+    if (back) loader.load(back, tex => textures.back = tex);
+
+    manager.onLoad = () => {
+      if (!textures.side) textures.side = textures.front;
+      if (!textures.back) textures.back = textures.front;
+      callback(textures);
+    };
+    manager.onError = (url) => {
+      console.error("Error loading texture:", url);
+      callback(null);
+    };
+  }
+}
+
   switchRole("student");
 });
