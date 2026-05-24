@@ -1,6 +1,13 @@
 {
   "projects": {
-    "prd": "edumoni-prd",
-    "feature": "edumoni-feature"
+    "default": "edumoni"
+  },
+  "targets": {
+    "edumoni": {
+      "hosting": {
+        "prd": ["edumoni-prd"],
+        "feature": ["edumoni-feature"]
+      }
+    }
   }
 }

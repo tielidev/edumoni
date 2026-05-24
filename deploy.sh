@@ -44,6 +44,8 @@ if [ "$PROVIDER" != "firebase" ] && [ "$PROVIDER" != "gcs" ]; then
   show_help
 fi
 
+FIREBASE_PROJECT="edumoni"
+
 echo -e "\033[0;36m=== Starting EduMoni Deploy Script ===\033[0m"
 echo -e "\033[0;33mTarget Environment: $ENVIRONMENT\033[0m"
 echo -e "\033[0;33mProvider:           $PROVIDER\033[0m"
@@ -79,15 +81,12 @@ if [ "$PROVIDER" = "firebase" ]; then
     exit 1
   fi
 
-  echo "Switching to Firebase project alias: $ENVIRONMENT"
-  firebase use "$ENVIRONMENT"
-
+  echo "Deploying to project: $FIREBASE_PROJECT, target: $ENVIRONMENT"
   if [ "$CHANNEL" = "live" ]; then
-    echo "Deploying to live channel..."
-    firebase deploy --only hosting
+    firebase deploy --only hosting:"$ENVIRONMENT" --project "$FIREBASE_PROJECT"
   else
     echo "Deploying to preview channel '$CHANNEL'..."
-    firebase hosting:channel:deploy "$CHANNEL"
+    firebase hosting:channel:deploy "$CHANNEL" --only hosting:"$ENVIRONMENT" --project "$FIREBASE_PROJECT"
   fi
 
 elif [ "$PROVIDER" = "gcs" ]; then
