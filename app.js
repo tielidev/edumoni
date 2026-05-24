@@ -119,16 +119,26 @@ const PRESET_STUDENTS = [
 // 2. 本地数据库读写辅助 (LocalStorage Database Controllers)
 // ============================================================================
 function dbInit() {
-  const needsReset = localStorage.getItem("EduMoni_Pets") && !localStorage.getItem("EduMoni_Pets").includes('story');
+  const SCHEMA_VERSION = "v3";
+  const needsReset = localStorage.getItem("EduMoni_Version") !== SCHEMA_VERSION;
   if (!localStorage.getItem("EduMoni_Init") || needsReset) {
+    // 强制清除旧版特定的 LocalStorage 数据
+    localStorage.removeItem("EduMoni_Pets");
+    localStorage.removeItem("EduMoni_Shop");
+    localStorage.removeItem("EduMoni_Assignments");
+    localStorage.removeItem("EduMoni_Students");
+    localStorage.removeItem("EduMoni_Logs");
+    
+    // 重新写入新版高保真预置数据
     localStorage.setItem("EduMoni_Pets", JSON.stringify(PRESET_PET_ASSETS));
     localStorage.setItem("EduMoni_Shop", JSON.stringify(PRESET_SHOP_ITEMS));
     localStorage.setItem("EduMoni_Assignments", JSON.stringify(PRESET_ASSIGNMENTS));
     localStorage.setItem("EduMoni_Students", JSON.stringify(PRESET_STUDENTS));
     localStorage.setItem("EduMoni_Logs", JSON.stringify([
-      { type: "system", text: "系统初始化成功，预置数据库就绪并加载高保真原画！" }
+      { type: "system", text: "系统初始化成功，预置数据库已强制升级至v3版本，已载入三视图及故事资产！" }
     ]));
     localStorage.setItem("EduMoni_Init", "true");
+    localStorage.setItem("EduMoni_Version", SCHEMA_VERSION);
   }
 }
 
