@@ -1,0 +1,1214 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* ==========================================
+   1. 设计系统变量 (Design Tokens)
+   ========================================== */
+:root {
+  --font-primary: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-display: 'Comfortaa', var(--font-primary);
+
+  /* 主题色系 - 炫酷暗黑玻璃底色 */
+  --bg-app: hsl(220, 25%, 8%);
+  --bg-surface: hsla(220, 20%, 14%, 0.6);
+  --bg-surface-hover: hsla(220, 20%, 20%, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-bright: rgba(255, 255, 255, 0.18);
+  --text-primary: hsl(210, 20%, 98%);
+  --text-secondary: hsl(215, 15%, 72%);
+  --text-muted: hsl(215, 10%, 55%);
+  --accent-cyan: hsl(190, 90%, 50%);
+  --accent-cyan-glow: hsla(190, 90%, 50%, 0.35);
+
+  /* 元素属性配色与发光效果 */
+  --color-grass: hsl(145, 65%, 48%);
+  --glow-grass: hsla(145, 65%, 48%, 0.3);
+  
+  --color-fire: hsl(10, 85%, 55%);
+  --glow-fire: hsla(10, 85%, 55%, 0.3);
+  
+  --color-water: hsl(205, 90%, 55%);
+  --glow-water: hsla(205, 90%, 55%, 0.3);
+  
+  --color-electric: hsl(48, 95%, 50%);
+  --glow-electric: hsla(48, 95%, 50%, 0.35);
+  
+  --color-earth: hsl(32, 60%, 48%);
+  --glow-earth: hsla(32, 60%, 48%, 0.3);
+
+  /* 卡片圆角及过渡 */
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==========================================
+   2. 基础重置与重构 (Base Styling)
+   ========================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 10% 10%, hsla(190, 80%, 40%, 0.08) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, hsla(145, 80%, 40%, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, hsla(10, 80%, 40%, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, .brand-text, .level-tag {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* ==========================================
+   3. 布局骨架 (Layout Structure)
+   ========================================== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 顶部角色控制面板 */
+.top-control-bar {
+  background: hsla(220, 25%, 6%, 0.9);
+  border: 1px solid var(--border-glass-bright);
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.brand-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.brand-text {
+  font-size: 20px;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.role-selectors {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-glass);
+}
+
+.role-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.role-btn.active {
+  background: var(--accent-cyan);
+  color: hsl(220, 25%, 8%);
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
+}
+
+.role-btn:hover:not(.active) {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 主内容区域与页面容器 */
+.view-panel {
+  display: none;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.view-panel.active {
+  display: block;
+}
+
+/* ==========================================
+   4. 网页公共组件 (Generic CSS UI Components)
+   ========================================== */
+.glass-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  padding: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: var(--transition-smooth);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  color: hsl(220, 25%, 8%);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--accent-cyan-glow);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-glass-bright);
+}
+
+/* 标签导航栏 */
+.tab-navigation {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 8px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 8px 16px;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.tab-btn.active {
+  color: var(--accent-cyan);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent-cyan);
+  border-radius: 3px;
+  box-shadow: 0 0 8px var(--accent-cyan);
+}
+
+/* ==========================================
+   5. 学生端布局 (Student View Layout)
+   ========================================== */
+
+/* 5.1 宠物培育中心 (Pet Center) */
+.pet-center-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  gap: 24px;
+}
+
+.pet-showcase-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-underglow {
+  position: absolute;
+  bottom: -80px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+  opacity: 0.6;
+  transition: var(--transition-smooth);
+}
+
+.pet-avatar-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 4s ease-in-out infinite;
+}
+
+.pet-sprite-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+  transition: var(--transition-smooth);
+}
+
+/* 自定义宠物装饰品如皇冠 */
+.pet-accessory {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.feed-control-area {
+  margin-top: 24px;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.food-selector-box {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.food-item-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.food-item-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
+  border-color: var(--accent-cyan);
+}
+
+.food-item-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 宠物数值属性面板 */
+.pet-stats-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pet-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pet-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.element-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.element-badge.grass { background-color: var(--color-grass); color: #fff; box-shadow: 0 0 10px var(--glow-grass); }
+.element-badge.fire { background-color: var(--color-fire); color: #fff; box-shadow: 0 0 10px var(--glow-fire); }
+.element-badge.water { background-color: var(--color-water); color: #fff; box-shadow: 0 0 10px var(--glow-water); }
+.element-badge.electric { background-color: var(--color-electric); color: #000; box-shadow: 0 0 10px var(--glow-electric); }
+.element-badge.earth { background-color: var(--color-earth); color: #fff; box-shadow: 0 0 10px var(--glow-earth); }
+
+.stat-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.progress-bar-container {
+  height: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* 核心五维数值条配色 */
+.progress-bar-fill.xp { background-color: var(--accent-cyan); color: var(--accent-cyan); }
+.progress-bar-fill.hp { background-color: #ff5252; color: #ff5252; }
+.progress-bar-fill.atk { background-color: #ff9800; color: #ff9800; }
+.progress-bar-fill.def { background-color: #2196f3; color: #2196f3; }
+.progress-bar-fill.spd { background-color: #9c27b0; color: #9c27b0; }
+
+.stat-grid-nums {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.stat-num-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-glass);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.stat-num-val {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* 进化链可视化指示器 */
+.evolution-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid var(--border-glass);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin-top: 15px;
+}
+
+.evo-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+  transition: var(--transition-smooth);
+}
+
+.evo-step.active {
+  opacity: 1;
+}
+
+.evo-step.completed {
+  opacity: 0.8;
+}
+
+.evo-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: var(--transition-smooth);
+}
+
+.evo-step.active .evo-icon-wrap {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 15px var(--accent-cyan-glow);
+  background: rgba(0, 242, 254, 0.1);
+}
+
+.evo-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.evo-lvl {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.evo-arrow {
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+/* 5.2 班级大合影页面 (Class Photo Garden) */
+.garden-playground {
+  position: relative;
+  min-height: 500px;
+  background: linear-gradient(185deg, hsl(220, 25%, 6%) 0%, hsl(220, 20%, 10%) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-glass);
+  overflow: hidden;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 24px;
+}
+
+.playground-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.garden-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-smooth);
+  animation: float 4s ease-in-out infinite;
+}
+
+.garden-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 12px 28px rgba(0, 242, 254, 0.15);
+  z-index: 10;
+}
+
+.garden-sprite-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.garden-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.garden-card-owner {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 悬停名片卡详情 */
+.garden-tooltip {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  width: 200px;
+  background: hsla(220, 25%, 8%, 0.95);
+  border: 1px solid var(--border-glass-bright);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-smooth);
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+}
+
+.garden-card:hover .garden-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-line {
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+
+.tooltip-line strong {
+  color: var(--text-primary);
+}
+
+/* 5.3 积分商城 (Shop Console) */
+.shop-wallet-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, hsla(190, 90%, 50%, 0.1) 0%, hsla(220, 20%, 14%, 0.6) 100%);
+}
+
+.coin-counter {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: #ffca28;
+  text-shadow: 0 0 10px rgba(255, 202, 40, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.shop-item-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.shop-item-icon {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.shop-item-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.shop-item-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.shop-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.shop-item-price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #ffca28;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 5.4 宠物竞技切磋场 (Battle Arena) */
+.arena-outer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.arena-stage {
+  position: relative;
+  height: 380px;
+  background: radial-gradient(circle, hsla(220, 20%, 15%, 0.8) 0%, hsla(220, 25%, 8%, 0.95) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-glass-bright);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.arena-diagonal-layer {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  position: relative;
+}
+
+/* 玩家（左下角）与对手（右上角）对齐 */
+.battle-participant {
+  width: 250px;
+  position: absolute;
+  transition: var(--transition-smooth);
+}
+
+.battle-participant.opponent {
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.battle-participant.player {
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.battle-hud {
+  width: 240px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--border-glass);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  backdrop-filter: blur(5px);
+}
+
+.battle-hud-name {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.battle-hud-level {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.battle-sprite-box {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opponent .battle-sprite-box {
+  transform: scaleX(-1); /* 面向左侧 */
+}
+
+.battle-sprite-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 飘动伤害数值 */
+.damage-bubble {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff5252;
+  text-shadow: 0 0 10px rgba(255, 82, 82, 0.6);
+  animation: floatUpFade 0.8s ease-out forwards;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.damage-bubble.heal {
+  color: #4caf50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
+}
+
+/* 对战动作栏与技能卡组 */
+.battle-action-bar {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+
+.skills-deck {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.skill-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition-smooth);
+  color: var(--text-primary);
+}
+
+.skill-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.skill-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.skill-btn-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.skill-btn-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.skill-cooldown {
+  font-size: 10px;
+  color: #ff9800;
+}
+
+.battle-logs-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 12px;
+  overflow-y: auto;
+  max-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.battle-log-entry {
+  color: var(--text-secondary);
+  border-left: 2px solid var(--border-glass);
+  padding-left: 8px;
+}
+
+.battle-log-entry.strike { border-color: #ff5252; color: var(--text-primary); }
+.battle-log-entry.effect { border-color: #ff9800; color: #ffe082; }
+.battle-log-entry.heal { border-color: #4caf50; color: #a5d6a7; }
+.battle-log-entry.system { border-color: var(--accent-cyan); color: #80deea; }
+
+/* 结算弹窗 */
+.battle-result-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 50;
+  gap: 16px;
+  animation: fadeIn 0.3s forwards;
+}
+
+.result-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.result-title.win {
+  color: #ffca28;
+  text-shadow: 0 0 20px rgba(255, 202, 40, 0.5);
+}
+
+.result-title.lose {
+  color: #757575;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================
+   6. 教师端布局 (Teacher Console Layout)
+   ========================================== */
+.teacher-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  transition: var(--transition-smooth);
+}
+
+.form-control:focus {
+  border-color: var(--accent-cyan);
+  outline: none;
+  box-shadow: 0 0 8px var(--accent-cyan-glow);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.assignments-table, .students-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.assignments-table th, .students-table th,
+.assignments-table td, .students-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.assignments-table th, .students-table th {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.assignments-table tbody tr:hover, .students-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.badge-completed {
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+  border: 1px solid #388e3c;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.badge-pending {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ffb74d;
+  border: 1px solid #f57c00;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+/* 批改弹窗/面板 */
+.grading-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-glass-bright);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  margin-top: 15px;
+}
+
+.homework-content-preview {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-glass);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.grading-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.grade-btn {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.grade-btn.excellent { background: rgba(76, 175, 80, 0.15); color: #81c784; border-color: #388e3c; }
+.grade-btn.excellent:hover { background: #388e3c; color: #fff; }
+
+.grade-btn.good { background: rgba(33, 150, 243, 0.15); color: #64b5f6; border-color: #1976d2; }
+.grade-btn.good:hover { background: #1976d2; color: #fff; }
+
+.grade-btn.completed { background: rgba(255, 152, 0, 0.15); color: #ffb74d; border-color: #f57c00; }
+.grade-btn.completed:hover { background: #f57c00; color: #fff; }
+
+/* 审计列表 */
+.coupon-audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.audit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-glass);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+}
+
+.audit-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.audit-item-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.audit-item-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ==========================================
+   7. 管理员端布局 (Admin Console Layout)
+   ========================================== */
+.admin-columns {
+  display: grid;
+  grid-template-columns: 1.1fr 1.9fr;
+  gap: 24px;
+}
+
+.asset-list-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.asset-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-glass);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.asset-item-card:hover, .asset-item-card.selected {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--accent-cyan);
+}
+
+.asset-item-brief {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.asset-item-avatar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.asset-item-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.asset-item-el {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* 表单列布局 */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-section-title {
+  font-size: 16px;
+  border-left: 3px solid var(--accent-cyan);
+  padding-left: 8px;
+  margin: 16px 0 10px;
+}
+
+/* ==========================================
+   8. 动画关键帧与特效 (Animations & Effects)
+   ========================================== */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes floatUpFade {
+  0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+  20% { opacity: 1; transform: translateY(0px) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 进化爆破光芒 */
+@keyframes evolution-glow {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 0px var(--element-glow));
+    transform: scale(1);
+  }
+  40% {
+    filter: brightness(2.5) drop-shadow(0 0 40px var(--element-glow));
+    transform: scale(1.15);
+  }
+  50% {
+    filter: brightness(3) drop-shadow(0 0 60px var(--element-glow));
+    opacity: 0.2;
+  }
+  60% {
+    filter: brightness(1.5) drop-shadow(0 0 20px var(--element-glow));
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 0 10px var(--element-glow));
+    transform: scale(1);
+  }
+}
+
+.evolving {
+  animation: evolution-glow 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* 受击晃动 */
+@keyframes strike-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+  20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+
+.damaged-shake {
+  animation: strike-shake 0.4s ease-in-out;
+}
+
+/* 金币闪闪滚动 */
+.gold-spin {
+  display: inline-block;
+  animation: gold-rotate 1.5s linear infinite;
+  color: #ffca28;
+}
+
+@keyframes gold-rotate {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* 自适应屏幕适配 */
+@media (max-width: 1024px) {
+  .pet-center-grid, .teacher-grid, .admin-columns {
+    grid-template-columns: 1fr;
+  }
+  .pet-showcase-panel {
+    min-height: 400px;
+  }
+}
