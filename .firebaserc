@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "prd": "edumoni-prd",
+    "feature": "edumoni-feature"
+  }
+}
