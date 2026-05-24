@@ -1,10 +1,12 @@
-name: Deploy and Test EduMoni
+name: Deploy and Test EduMoni (GitHub Actions — replaced by GCP Cloud Build)
+# This workflow is intentionally disabled.
+# Auto-deployment is now handled by GCP Cloud Build triggers (cloudbuild.yaml).
+# To re-enable, restore the branches list below.
 
 on:
   push:
     branches:
-      - main
-      - feature/gcp-deploy
+      - _disabled_use_cloudbuild
 
 jobs:
   deploy-feature:
