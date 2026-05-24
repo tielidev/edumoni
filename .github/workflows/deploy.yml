@@ -1,0 +1,82 @@
+name: Deploy and Test EduMoni
+
+on:
+  push:
+    branches:
+      - main
+      - feature/gcp-deploy
+
+jobs:
+  deploy-feature:
+    if: github.ref_name == 'feature/gcp-deploy'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting (Feature)
+        id: firebase_deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EDUMONI_FEATURE }}'
+          projectId: edumoni-feature
+          channelId: live
+
+      - name: Run Regression Test
+        run: |
+          TARGET_URL="${{ steps.firebase_deploy.outputs.details_url }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="https://edumoni-feature.web.app"
+          fi
+          echo "Running regression test on $TARGET_URL"
+          npm run test:regression -- "$TARGET_URL"
+
+  deploy-prd:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting (Production)
+        id: firebase_deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EDUMONI_PRD }}'
+          projectId: edumoni-prd
+          channelId: live
+
+      - name: Run Regression Test
+        run: |
+          TARGET_URL="${{ steps.firebase_deploy.outputs.details_url }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="https://edumoni-prd.web.app"
+          fi
+          echo "Running regression test on $TARGET_URL"
+          npm run test:regression -- "$TARGET_URL"
