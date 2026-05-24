@@ -5,25 +5,25 @@
 // 1. 初始化预置数据 (Mock Database Setup)
 const PRESET_PET_ASSETS = [
   // 草系进化链
-  { id: "leafox", name: "叶狐", element: "grass", avatar: "🦊", fullBody: "assets/leafox.png", signatureMove: "藤鞭抽击", hp: 140, growthHp: 15, atk: 15, growthAtk: 2.0, def: 18, growthDef: 2.2, spd: 8, growthSpd: 1.0, evoLevel: 20, evoTarget: "fernine" },
-  { id: "fernine", name: "丛林森狐", element: "grass", avatar: "🦊", fullBody: "🦊🍃", signatureMove: "荆棘飞弹", hp: 168, growthHp: 18, atk: 18, growthAtk: 2.4, def: 22, growthDef: 2.6, spd: 10, growthSpd: 1.2, evoLevel: 40, evoTarget: "sylvaron" },
-  { id: "sylvaron", name: "森罗贤者", element: "grass", avatar: "🐺", fullBody: "🐺✨", signatureMove: "万木复苏", hp: 218, growthHp: 22, atk: 23, growthAtk: 3.0, def: 29, growthDef: 3.2, spd: 13, growthSpd: 1.5, evoLevel: 0, evoTarget: "" },
+  { id: "leafox", name: "叶狐", element: "grass", avatar: "🦊", fullBody: "assets/leafox.png", signatureMove: "藤鞭抽击", hp: 140, growthHp: 15, atk: 15, growthAtk: 2.0, def: 18, growthDef: 2.2, spd: 8, growthSpd: 1.0, evoLevel: 20, evoTarget: "fernine", story: "叶狐是温和且充满灵性的草属性宠物。它们非常害羞，喜欢栖息在茂密温暖的树林或灌木丛中。由于叶狐头顶独特的叶片与外界植物完美契合，这使得它擅长隐蔽自己并从阳光中汲取自然治愈能量。相传在森林深处，叶狐的出现预示着丰收与和平。", illustrations: ["assets/leafox_action.png"], threeViews: { front: "assets/leafox_3views.png", side: "", back: "" } },
+  { id: "fernine", name: "丛林森狐", element: "grass", avatar: "🦊", fullBody: "🦊🍃", signatureMove: "荆棘飞弹", hp: 168, growthHp: 18, atk: 18, growthAtk: 2.4, def: 22, growthDef: 2.6, spd: 10, growthSpd: 1.2, evoLevel: 40, evoTarget: "sylvaron", story: "叶狐在达到20级后进化而来的形态。丛林森狐的体型更加矫健，身上的叶片也变成了尖锐的荆棘。它警觉性极高，能够通过踩踏地面来感知周围数公里内的一草一木。当发现入侵者时，它会射出如飞箭一般的硬质荆棘。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "sylvaron", name: "森罗贤者", element: "grass", avatar: "🐺", fullBody: "🐺✨", signatureMove: "万木复苏", hp: 218, growthHp: 22, atk: 23, growthAtk: 3.0, def: 29, growthDef: 3.2, spd: 13, growthSpd: 1.5, evoLevel: 0, evoTarget: "", story: "丛林森狐在达到40级并进行终极觉醒的形态。森罗贤者是森林的守护神，拥有沟通大自然、操纵百木生长的神圣力量。它额头上的水晶能散发出温和的光芒，治愈一切受伤的弱小生命。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
 
   // 火系进化链
-  { id: "pyroclaw", name: "小火爪", element: "fire", avatar: "🐼", fullBody: "assets/pyroclaw.png", signatureMove: "火花冲撞", hp: 100, growthHp: 10, atk: 25, growthAtk: 3.5, def: 10, growthDef: 1.0, spd: 12, growthSpd: 1.8, evoLevel: 20, evoTarget: "embercrest" },
-  { id: "embercrest", name: "熔岩狂熊猫", element: "fire", avatar: "🐼", fullBody: "🐼☄️", signatureMove: "烈焰喷涌", hp: 120, growthHp: 12, atk: 30, growthAtk: 4.2, def: 12, growthDef: 1.2, spd: 14, growthSpd: 2.2, evoLevel: 40, evoTarget: "ignidrago" },
-  { id: "ignidrago", name: "爆炎龙尊", element: "fire", avatar: "🐼", fullBody: "🐲🔥", signatureMove: "超新星爆裂", hp: 156, growthHp: 16, atk: 39, growthAtk: 5.5, def: 16, growthDef: 1.6, spd: 18, growthSpd: 2.9, evoLevel: 0, evoTarget: "" },
+  { id: "pyroclaw", name: "小火爪", element: "fire", avatar: "🐼", fullBody: "assets/pyroclaw.png", signatureMove: "火花冲撞", hp: 100, growthHp: 10, atk: 25, growthAtk: 3.5, def: 10, growthDef: 1.0, spd: 12, growthSpd: 1.8, evoLevel: 20, evoTarget: "embercrest", story: "小火爪是热情洋溢且有些顽皮的火属性宠物。它的尾巴上燃烧着永不熄灭的火焰，火焰的大小代表着它精神的状态。它喜欢在温暖的火山岩地带奔跑，脾气稍微有些急躁，但对训练家极其忠诚。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "embercrest", name: "熔岩狂熊猫", element: "fire", avatar: "🐼", fullBody: "🐼☄️", signatureMove: "烈焰喷涌", hp: 120, growthHp: 12, atk: 30, growthAtk: 4.2, def: 12, growthDef: 1.2, spd: 14, growthSpd: 2.2, evoLevel: 40, evoTarget: "ignidrago", story: "小火爪在达到20级进化后的形态。熔岩狂熊猫拥有极其厚实的毛皮，能够抵御极高的温度。它的脾气十分火爆，双手包裹着滚烫的熔岩，能一拳击碎坚硬的岩石，经常在熔岩深渊中进行艰苦的格斗修行。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "ignidrago", name: "爆炎龙尊", element: "fire", avatar: "🐼", fullBody: "🐲🔥", signatureMove: "超新星爆裂", hp: 156, growthHp: 16, atk: 39, growthAtk: 5.5, def: 16, growthDef: 1.6, spd: 18, growthSpd: 2.9, evoLevel: 0, evoTarget: "", story: "熔岩狂熊猫在达到40级并进行终极进化后的姿态。爆炎龙尊是火元素的化身，身上流淌着岩浆般炽热的力量。它每一次咆哮都能引动天降陨石，超新星爆裂更是能瞬间将方圆数十里的坚冰融化殆尽。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
 
   // 水系进化链
-  { id: "bubblefin", name: "泡泡鳍", element: "water", avatar: "🦭", fullBody: "assets/bubblefin.png", signatureMove: "水泡齐射", hp: 120, growthHp: 12, atk: 18, growthAtk: 2.5, def: 15, growthDef: 1.8, spd: 10, growthSpd: 1.2, evoLevel: 20, evoTarget: "aquaglide" },
-  { id: "aquaglide", name: "激流喷射兽", element: "water", avatar: "🦭", fullBody: "🦭🌊", signatureMove: "激流喷射", hp: 144, growthHp: 14, atk: 22, growthAtk: 3.0, def: 18, growthDef: 2.2, spd: 12, growthSpd: 1.4, evoLevel: 40, evoTarget: "nepturax" },
-  { id: "nepturax", name: "海皇波塞龙", element: "water", avatar: "🐉", fullBody: "🐉🔱", signatureMove: "海皇怒涛", hp: 187, growthHp: 18, atk: 29, growthAtk: 3.9, def: 23, growthDef: 2.9, spd: 16, growthSpd: 1.8, evoLevel: 0, evoTarget: "" },
+  { id: "bubblefin", name: "泡泡鳍", element: "water", avatar: "🦭", fullBody: "assets/bubblefin.png", signatureMove: "水泡齐射", hp: 120, growthHp: 12, atk: 18, growthAtk: 2.5, def: 15, growthDef: 1.8, spd: 10, growthSpd: 1.2, evoLevel: 20, evoTarget: "aquaglide", story: "泡泡鳍是活泼好动的水属性宠物。它擅长制造各种坚固的彩色水泡，常用来包裹食物或戏弄同伴。泡泡鳍生活在清澈的湖泊或海湾中，生性乐观，对人类非常友好，是孩子们最喜欢的玩伴之一。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "aquaglide", name: "激流喷射兽", element: "water", avatar: "🦭", fullBody: "🦭🌊", signatureMove: "激流喷射", hp: 144, growthHp: 14, atk: 22, growthAtk: 3.0, def: 18, growthDef: 2.2, spd: 12, growthSpd: 1.4, evoLevel: 40, evoTarget: "nepturax", story: "泡泡鳍达到20级进化后的形态。激流喷射兽体型流线型极强，在水中游泳的速度可以超越潜艇。它身上的喷射孔能够爆发出强力的水流，产生极大的反冲力，使其像鱼雷一般在激流中高速穿梭。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "nepturax", name: "海皇波塞龙", element: "water", avatar: "🐉", fullBody: "🐉🔱", signatureMove: "海皇怒涛", hp: 187, growthHp: 18, atk: 29, growthAtk: 3.9, def: 23, growthDef: 2.9, spd: 16, growthSpd: 1.8, evoLevel: 0, evoTarget: "", story: "激流喷射兽在达到40级完成三阶进化后的形态。海皇波塞龙是深海的绝对统治者，手持由深海寒冰与激流凝结而成的三叉戟虚影。它能轻易掀起滔天巨浪，也能够平息狂暴的海啸，保护着大洋的生态平衡。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
 
   // 其他电系与地系
-  { id: "sparky", name: "闪电雀", element: "electric", avatar: "🐦", fullBody: "🐦⚡", signatureMove: "雷光一击", hp: 90, growthHp: 8, atk: 22, growthAtk: 3.2, def: 8, growthDef: 0.8, spd: 18, growthSpd: 2.5, evoLevel: 25, evoTarget: "voltclaw" },
-  { id: "voltclaw", name: "雷鸣鹰", element: "electric", avatar: "🦅", fullBody: "🦅⚡", signatureMove: "苍穹怒雷", hp: 110, growthHp: 10, atk: 28, growthAtk: 3.8, def: 10, growthDef: 1.0, spd: 22, growthSpd: 3.0, evoLevel: 0, evoTarget: "" },
-  { id: "muddy", name: "泥泥驼", element: "earth", avatar: "🐪", fullBody: "🐪⛰️", signatureMove: "落石击", hp: 150, growthHp: 16, atk: 16, growthAtk: 2.2, def: 22, growthDef: 2.6, spd: 6, growthSpd: 0.8, evoLevel: 25, evoTarget: "clayback" },
-  { id: "clayback", name: "裂地巨兽", element: "earth", avatar: "🐊", fullBody: "🐊⛰️", signatureMove: "地壳崩裂", hp: 185, growthHp: 20, atk: 20, growthAtk: 2.8, def: 28, growthDef: 3.2, spd: 8, growthSpd: 1.0, evoLevel: 0, evoTarget: "" }
+  { id: "sparky", name: "闪电雀", element: "electric", avatar: "🐦", fullBody: "🐦⚡", signatureMove: "雷光一击", hp: 90, growthHp: 8, atk: 22, growthAtk: 3.2, def: 8, growthDef: 0.8, spd: 18, growthSpd: 2.5, evoLevel: 25, evoTarget: "voltclaw", story: "闪电雀是娇小敏捷的电属性鸟类宠物。它经常在雷雨天在云层中穿梭，吸收闪电的电荷存入羽毛中。它飞行的轨迹犹如一道曲折的闪电，能在瞬间完成九十度的急转弯，极其擅长速度和空中突袭。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "voltclaw", name: "雷鸣鹰", element: "electric", avatar: "🦅", fullBody: "🦅⚡", signatureMove: "苍穹怒雷", hp: 110, growthHp: 10, atk: 28, growthAtk: 3.8, def: 10, growthDef: 1.0, spd: 22, growthSpd: 3.0, evoLevel: 0, evoTarget: "", story: "闪电雀在25级进化后的形态。雷鸣鹰展开双翼可达两米，羽毛在雷电充盈下会发出耀眼的金光。它的双爪锐利无比，附带有高压电流，能够在俯冲的瞬间将敌人麻痹，是天天空中的雷电宣告者。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "muddy", name: "泥泥驼", element: "earth", avatar: "🐪", fullBody: "🐪⛰️", signatureMove: "落石击", hp: 150, growthHp: 16, atk: 16, growthAtk: 2.2, def: 22, growthDef: 2.6, spd: 6, growthSpd: 0.8, evoLevel: 25, evoTarget: "clayback", story: "泥泥驼是性格温吞、耐力超群的地属性宠物。它常年生活在荒凉的隔壁或荒漠中，背上的驼峰由坚硬的矿石构成。它平时行动缓慢，但只要它用力踩踏地面，就能引发局部落石，具有极强的防御力。", illustrations: [], threeViews: { front: "", side: "", back: "" } },
+  { id: "clayback", name: "裂地巨兽", element: "earth", avatar: "🐊", fullBody: "🐊⛰️", signatureMove: "地壳崩裂", hp: 185, growthHp: 20, atk: 20, growthAtk: 2.8, def: 28, growthDef: 3.2, spd: 8, growthSpd: 1.0, evoLevel: 0, evoTarget: "", story: "泥泥驼在25级进化后的形态。裂地巨兽体型庞大如小山丘，背部隆起的硬质黏土铠甲能够抵挡几乎所有的物理伤害。它性格沉稳，是绝对可靠的盾牌，一旦发怒，其强力踩踏引发的地壳崩裂会让大地震颤。", illustrations: [], threeViews: { front: "", side: "", back: "" } }
 ];
 
 const PRESET_SHOP_ITEMS = [
@@ -119,7 +119,7 @@ const PRESET_STUDENTS = [
 // 2. 本地数据库读写辅助 (LocalStorage Database Controllers)
 // ============================================================================
 function dbInit() {
-  const needsReset = localStorage.getItem("EduMoni_Pets") && !localStorage.getItem("EduMoni_Pets").includes('assets/');
+  const needsReset = localStorage.getItem("EduMoni_Pets") && !localStorage.getItem("EduMoni_Pets").includes('story');
   if (!localStorage.getItem("EduMoni_Init") || needsReset) {
     localStorage.setItem("EduMoni_Pets", JSON.stringify(PRESET_PET_ASSETS));
     localStorage.setItem("EduMoni_Shop", JSON.stringify(PRESET_SHOP_ITEMS));
@@ -214,7 +214,10 @@ function getPetStats(petInstance, petAssets) {
     displayName: petInstance.name || asset.name,
     assetName: asset.name,
     assetId: asset.id,
-    power: hp + atk * 4 + def * 4 + spd * 2 // 自定义评估战斗力的公式
+    power: hp + atk * 4 + def * 4 + spd * 2, // 自定义评估战斗力的公式
+    story: asset.story || "",
+    illustrations: asset.illustrations || [],
+    threeViews: asset.threeViews || { front: "", side: "", back: "" }
   };
 }
 
@@ -287,6 +290,9 @@ function renderActiveTab(tabId) {
     // 学生端
     case "student-pet-center":
       renderStudentPetCenter();
+      break;
+    case "student-encyclopedia":
+      renderStudentEncyclopedia();
       break;
     case "student-photo-garden":
       renderStudentPhotoGarden();
@@ -1354,7 +1360,285 @@ function openSubmitHomeworkForm(taskId) {
 }
 
 // ============================================================================
+// 6.6 学生端宠物图鉴档案 (Student Encyclopedia View)
+// ============================================================================
+let currentSelectedEncyclopediaPetId = null;
+
+function renderStudentEncyclopedia() {
+  const pets = getPetsTable();
+  const listContainer = document.getElementById("encyclopedia-list");
+  if (!listContainer) return;
+  listContainer.innerHTML = "";
+
+  if (pets.length === 0) {
+    listContainer.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:10px;">暂无宠物数据</p>`;
+    document.getElementById("encyclopedia-detail").innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 120px 0;">请从左侧选择一只宠物查看详细档案...</p>`;
+    return;
+  }
+
+  // 默认选中第一个
+  if (!currentSelectedEncyclopediaPetId || !pets.some(p => p.id === currentSelectedEncyclopediaPetId)) {
+    currentSelectedEncyclopediaPetId = pets[0].id;
+  }
+
+  pets.forEach(pet => {
+    const card = document.createElement("div");
+    card.className = `asset-item-card ${pet.id === currentSelectedEncyclopediaPetId ? 'selected' : ''}`;
+    card.dataset.id = pet.id;
+
+    const avatarHtml = pet.avatar && pet.avatar.length > 4
+      ? `<img src="${pet.avatar}" class="asset-item-avatar" style="width:36px; height:36px; object-fit:contain;">`
+      : `<span style="font-size: 24px; width:36px; height:36px; display:flex; align-items:center; justify-content:center;">${pet.avatar || '🐾'}</span>`;
+
+    card.innerHTML = `
+      <div class="asset-item-brief">
+        ${avatarHtml}
+        <div>
+          <span class="asset-item-name">${pet.name}</span>
+          <span class="asset-item-el" style="margin-left: 6px;">(${pet.element})</span>
+        </div>
+      </div>
+      <span class="element-badge ${pet.element}" style="font-size:10px; padding:2px 6px;">${pet.element}</span>
+    `;
+
+    card.onclick = () => {
+      currentSelectedEncyclopediaPetId = pet.id;
+      document.querySelectorAll("#encyclopedia-list .asset-item-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      renderEncyclopediaDetail(pet.id);
+    };
+
+    listContainer.appendChild(card);
+  });
+
+  renderEncyclopediaDetail(currentSelectedEncyclopediaPetId);
+}
+
+function renderEncyclopediaDetail(petId) {
+  const pets = getPetsTable();
+  const pet = pets.find(p => p.id === petId);
+  const detailContainer = document.getElementById("encyclopedia-detail");
+  if (!detailContainer) return;
+
+  if (!pet) {
+    detailContainer.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 120px 0;">请从左侧选择一只宠物查看详细档案...</p>`;
+    return;
+  }
+
+  // 整理立绘资源数组 (首选主立绘，若无则使用 avatar, 随后是备用立绘)
+  const allImages = [];
+  if (pet.fullBody) {
+    allImages.push({ type: "fullBody", url: pet.fullBody, label: "主立绘" });
+  } else if (pet.avatar && pet.avatar.length > 4) {
+    allImages.push({ type: "avatar", url: pet.avatar, label: "主立绘" });
+  }
+
+  if (pet.illustrations && Array.isArray(pet.illustrations)) {
+    pet.illustrations.forEach((url, i) => {
+      if (url) allImages.push({ type: "illustration", url: url, label: `姿态 ${i + 1}` });
+    });
+  }
+
+  // 属性成长雷达/展示数据
+  const power = pet.hp + pet.atk * 4 + pet.def * 4 + pet.spd * 2;
+
+  // 进化链信息
+  let evoInfoHtml = "";
+  if (pet.evoLevel > 0 && pet.evoTarget) {
+    const targetPet = pets.find(p => p.id === pet.evoTarget);
+    const targetName = targetPet ? targetPet.name : pet.evoTarget;
+    evoInfoHtml = `<span style="color: var(--accent-cyan);">🧬 ${pet.evoLevel}级 进化为 [${targetName}]</span>`;
+  } else {
+    evoInfoHtml = `<span style="color: var(--text-muted);">🧬 已达到终极进化形态</span>`;
+  }
+
+  // 核心内容
+  detailContainer.innerHTML = `
+    <!-- Top Hero Section -->
+    <div class="encyclopedia-hero" style="display: flex; gap: 24px; align-items: stretch;">
+      <!-- Hero Image Box -->
+      <div class="glass-panel" id="encyclopedia-main-img-box" style="flex: 1.2; display: flex; align-items: center; justify-content: center; min-height: 280px; background: rgba(0,0,0,0.2); position: relative; border-radius: var(--radius-md); overflow: hidden;">
+        <!-- 主立绘图 -->
+        <div id="encyclopedia-main-img-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;">
+          ${renderEncyclopediaMainImage(allImages[0] ? allImages[0].url : pet.avatar)}
+        </div>
+      </div>
+
+      <!-- Hero Brief Box -->
+      <div style="flex: 1.8; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <h2 style="font-size: 26px; margin: 0; font-weight: 800; color: #fff;">${pet.name}</h2>
+            <span class="element-badge ${pet.element}" style="font-size: 13px; padding: 4px 10px;">${pet.element}</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">ID: ${pet.id} | ${evoInfoHtml}</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="tooltip-line"><strong>专属大招:</strong> <span style="color:#ffca28; font-weight:700;">${pet.signatureMove || '冲撞'}</span></div>
+            <div class="tooltip-line"><strong>成长潜力:</strong> 
+              <span style="color:#00e5ff; font-weight:700;">★ ★ ★ ★ ☆</span>
+            </div>
+            <div class="tooltip-line"><strong>综合战力评分:</strong> <span style="color:var(--accent-pink); font-weight:700;">${power}</span></div>
+          </div>
+        </div>
+
+        <!-- 核心基础属性 -->
+        <div class="glass-panel" style="padding: 12px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+          <h4 style="font-size:12px; margin:0 0 4px 0; color:var(--text-secondary); text-transform: uppercase;">核心基础属性 (Base Stats)</h4>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            ${renderStatBar("生命值 (HP)", pet.hp, pet.growthHp, 250, "#4caf50")}
+            ${renderStatBar("攻击力 (ATK)", pet.atk, pet.growthAtk, 100, "#ff5252")}
+            ${renderStatBar("防御力 (DEF)", pet.def, pet.growthDef, 100, "#2196f3")}
+            ${renderStatBar("敏捷度 (SPD)", pet.spd, pet.growthSpd, 100, "#ffeb3b")}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background Lore Story -->
+    <div class="glass-panel story-quote-card" style="padding: 16px 20px; background: rgba(255,255,255,0.02); border-left: 4px solid var(--accent-cyan); position: relative;">
+      <span style="position: absolute; left: 8px; top: 0px; font-size: 36px; color: rgba(255,255,255,0.08); font-family: Georgia, serif; line-height: 1;">“</span>
+      <h3 style="font-size: 14px; margin-bottom: 8px; color: var(--text-secondary);">宠物背景描述与生境考据</h3>
+      <p style="font-size: 13px; line-height: 1.6; color: var(--text-secondary); text-indent: 2em; margin: 0;">
+        ${pet.story || "关于这只神秘宠物的故事正在由生态学者编撰中，敬请期待！"}
+      </p>
+    </div>
+
+    <!-- Illustrations Gallery (立绘选集) -->
+    <div>
+      <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+        <span>🖼️ 多姿态立绘选集</span>
+        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">(点击缩略图切换上方主视图)</span>
+      </h3>
+      <div class="gallery-thumb-grid" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px;">
+        ${allImages.map((img, idx) => `
+          <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchEncyclopediaMainImg('${img.url.replace(/'/g, "\\'")}', this)" style="width: 70px; height: 70px; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; overflow: hidden; flex-shrink: 0;">
+            ${img.url.length > 4 
+              ? `<img src="${img.url}" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;">` 
+              : `<span style="font-size: 32px;">${img.url}</span>`
+            }
+          </div>
+        `).join("")}
+        ${allImages.length === 0 ? `<p style="color:var(--text-muted); font-size:12px;">暂无其他变体立绘</p>` : ""}
+      </div>
+    </div>
+
+    <!-- Concept Three-Views (三视图) -->
+    <div>
+      <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--text-secondary);">📐 设计开发三视图参考</h3>
+      ${renderThreeViewsSection(pet.threeViews)}
+    </div>
+  `;
+}
+
+function renderEncyclopediaMainImage(urlOrEmoji) {
+  if (!urlOrEmoji) return `<span style="font-size: 80px; user-select:none;">🐾</span>`;
+  if (urlOrEmoji.length > 4) {
+    return `<img src="${urlOrEmoji}" class="encyclopedia-main-img" style="max-width: 100%; max-height: 240px; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)); animation: float 6s ease-in-out infinite;">`;
+  } else {
+    return `<span style="font-size: 96px; user-select:none; animation: float 6s ease-in-out infinite;">${urlOrEmoji}</span>`;
+  }
+}
+
+function renderStatBar(label, base, growth, maxVal, color) {
+  const pct = Math.min(100, (base / maxVal) * 100);
+  return `
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
+      <span style="width: 80px; color: var(--text-secondary); font-weight:600;">${label}</span>
+      <span style="width: 30px; font-weight: 700; text-align: right; color:#fff;">${base}</span>
+      <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; position: relative;">
+        <div style="width: ${pct}%; height: 100%; background: ${color}; border-radius: 3px; transition: width 0.3s ease;"></div>
+      </div>
+      <span style="width: 50px; color: var(--text-muted); text-align: left; font-size: 10px;">(成长 +${growth})</span>
+    </div>
+  `;
+}
+
+function renderThreeViewsSection(threeViews) {
+  if (!threeViews) {
+    return `<div class="glass-panel" style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">暂无设计三视图资产</div>`;
+  }
+
+  const { front, side, back } = threeViews;
+
+  const hasFront = !!front;
+  const hasSide = !!side;
+  const hasBack = !!back;
+
+  if (hasFront && !hasSide && !hasBack) {
+    return `
+      <div class="glass-panel three-views-container" style="padding: 12px; background: rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; gap: 6px; border-radius: var(--radius-md);">
+        ${front.length > 4 
+          ? `<img src="${front}" style="max-width: 100%; max-height: 320px; object-fit: contain; border-radius: var(--radius-sm);" onclick="openImageModal('${front}')">` 
+          : `<span style="font-size:48px;">${front}</span>`
+        }
+        <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">概念设计三视图合集 (点击可查看大图)</span>
+      </div>
+    `;
+  } else if (hasFront || hasSide || hasBack) {
+    return `
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div class="glass-panel three-views-container" style="padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(0,0,0,0.1); border-radius: var(--radius-md);">
+          ${front ? (front.length > 4 ? `<img src="${front}" style="width: 100%; height: 120px; object-fit: contain;" onclick="openImageModal('${front}')">` : `<span style="font-size:40px; height:120px; display:flex; align-items:center;">${front}</span>`) : `<span style="color:var(--text-muted); font-size:12px; height:120px; display:flex; align-items:center;">无正面资产</span>`}
+          <span style="font-size: 11px; color: var(--text-secondary); font-weight:700;">正面 (Front)</span>
+        </div>
+        <div class="glass-panel three-views-container" style="padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(0,0,0,0.1); border-radius: var(--radius-md);">
+          ${side ? (side.length > 4 ? `<img src="${side}" style="width: 100%; height: 120px; object-fit: contain;" onclick="openImageModal('${side}')">` : `<span style="font-size:40px; height:120px; display:flex; align-items:center;">${side}</span>`) : `<span style="color:var(--text-muted); font-size:12px; height:120px; display:flex; align-items:center;">无侧面资产</span>`}
+          <span style="font-size: 11px; color: var(--text-secondary); font-weight:700;">侧面 (Side)</span>
+        </div>
+        <div class="glass-panel three-views-container" style="padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(0,0,0,0.1); border-radius: var(--radius-md);">
+          ${back ? (back.length > 4 ? `<img src="${back}" style="width: 100%; height: 120px; object-fit: contain;" onclick="openImageModal('${back}')">` : `<span style="font-size:40px; height:120px; display:flex; align-items:center;">${back}</span>`) : `<span style="color:var(--text-muted); font-size:12px; height:120px; display:flex; align-items:center;">无背面资产</span>`}
+          <span style="font-size: 11px; color: var(--text-secondary); font-weight:700;">背面 (Back)</span>
+        </div>
+      </div>
+    `;
+  } else {
+    return `<div class="glass-panel" style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">暂无设计三视图资产</div>`;
+  }
+}
+
+function switchEncyclopediaMainImg(url, thumbElement) {
+  const container = document.getElementById("encyclopedia-main-img-container");
+  if (!container) return;
+  
+  document.querySelectorAll(".gallery-thumb").forEach(el => el.classList.remove("active"));
+  if (thumbElement) thumbElement.classList.add("active");
+  
+  container.innerHTML = renderEncyclopediaMainImage(url);
+}
+
+function openImageModal(imgUrl) {
+  let modal = document.getElementById("encyclopedia-image-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "encyclopedia-image-modal";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+    modal.style.backdropFilter = "blur(10px)";
+    modal.style.zIndex = "9999";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.cursor = "zoom-out";
+    
+    modal.onclick = () => {
+      modal.style.display = "none";
+    };
+    
+    document.body.appendChild(modal);
+  }
+  
+  modal.innerHTML = `<img src="${imgUrl}" style="max-width: 90%; max-height: 90%; object-fit: contain; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-radius: var(--radius-md); animation: zoomIn 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);">`;
+  modal.style.display = "flex";
+}
+
+// ============================================================================
 // 7. 教师端业务模块 (Teacher Console Controllers)
+// ============================================================================
 // ============================================================================
 
 // 7.1 教师发布作业
@@ -1692,6 +1976,11 @@ function loadPetToEditor(petId) {
   document.getElementById("edit-pet-growth-spd").value = pet.growthSpd;
   document.getElementById("edit-pet-evo-level").value = pet.evoLevel || 0;
   document.getElementById("edit-pet-evo-target").value = pet.evoTarget || "";
+  document.getElementById("edit-pet-story").value = pet.story || "";
+  document.getElementById("edit-pet-illustrations").value = pet.illustrations ? pet.illustrations.join(", ") : "";
+  document.getElementById("edit-pet-three-front").value = (pet.threeViews && pet.threeViews.front) || "";
+  document.getElementById("edit-pet-three-side").value = (pet.threeViews && pet.threeViews.side) || "";
+  document.getElementById("edit-pet-three-back").value = (pet.threeViews && pet.threeViews.back) || "";
 }
 
 // 8.2 渲染商城商品管理器货架
@@ -1843,6 +2132,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const growthSpd = parseFloat(document.getElementById("edit-pet-growth-spd").value);
     const evoLevel = parseInt(document.getElementById("edit-pet-evo-level").value) || 0;
     const evoTarget = document.getElementById("edit-pet-evo-target").value || "";
+    
+    const story = document.getElementById("edit-pet-story").value;
+    const illustrationsStr = document.getElementById("edit-pet-illustrations").value;
+    const illustrations = illustrationsStr ? illustrationsStr.split(",").map(s => s.trim()).filter(Boolean) : [];
+    const threeFront = document.getElementById("edit-pet-three-front").value;
+    const threeSide = document.getElementById("edit-pet-three-side").value;
+    const threeBack = document.getElementById("edit-pet-three-back").value;
+    const threeViews = { front: threeFront, side: threeSide, back: threeBack };
 
     const pets = getPetsTable();
     const existingIndex = pets.findIndex(p => p.id === id);
@@ -1850,7 +2147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const assetData = {
       id, name, element, avatar, fullBody, signatureMove: move,
       hp, growthHp, atk, growthAtk, def, growthDef, spd, growthSpd,
-      evoLevel, evoTarget
+      evoLevel, evoTarget, story, illustrations, threeViews
     };
 
     if (existingIndex !== -1) {

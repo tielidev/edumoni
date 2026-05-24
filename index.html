@@ -32,6 +32,7 @@
         <button class="tab-btn" data-target="student-photo-garden">宠物游乐园 (合影)</button>
         <button class="tab-btn" data-target="student-shop">积分商城</button>
         <button class="tab-btn" data-target="student-arena">竞技竞技场 (切磋)</button>
+        <button class="tab-btn" data-target="student-encyclopedia">图鉴档案</button>
         <button class="tab-btn" data-target="student-homework">作业提交终端</button>
       </nav>
 
@@ -242,7 +243,25 @@
         </div>
       </section>
 
-      <!-- 5. 作业提交终端 -->
+      <!-- 5. 宠物图鉴档案 (Encyclopedia) -->
+      <section id="student-encyclopedia" class="tab-panel">
+        <div class="teacher-grid">
+          <!-- 左侧：图鉴列表 -->
+          <div class="glass-panel" style="max-height: 520px; overflow-y: auto;">
+            <h2 style="font-size: 18px; margin-bottom: 12px;">图鉴角色选择</h2>
+            <div id="encyclopedia-list" class="asset-list-box">
+              <!-- 动态加载图鉴列表 -->
+            </div>
+          </div>
+
+          <!-- 右侧：详细档案 -->
+          <div class="glass-panel" id="encyclopedia-detail" style="display: flex; flex-direction: column; gap: 20px; min-height: 520px; overflow-y: auto;">
+            <p style="color: var(--text-muted); text-align: center; padding: 120px 0;">请从左侧选择一只宠物查看详细档案...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. 作业提交终端 -->
       <section id="student-homework" class="tab-panel">
         <div class="glass-panel" style="margin-bottom: 16px;">
           <h2 style="font-size: 20px; margin-bottom: 4px;">课后作业接收站</h2>
@@ -528,6 +547,31 @@
                     <option value="">-- 无 (不进化) --</option>
                     <!-- 动态加载 -->
                   </select>
+                </div>
+              </div>
+
+              <h4 class="form-section-title">角色背景与高级多媒体资产</h4>
+              <div class="form-group">
+                <label for="edit-pet-story">角色背景故事 (Background Lore)</label>
+                <textarea id="edit-pet-story" class="form-control" placeholder="输入关于这只宠物的来历、性格和故事背景..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="edit-pet-illustrations">备用立绘/动作图鉴 (半角逗号分隔的图片URL/Emoji)</label>
+                <input type="text" id="edit-pet-illustrations" class="form-control" placeholder="例如: assets/action1.png, assets/action2.png">
+              </div>
+              <div class="form-section-title" style="font-size:12px; margin-top:10px;">概念三视图图片配置 (URL/Emoji)</div>
+              <div class="form-grid-3" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+                <div class="form-group">
+                  <label for="edit-pet-three-front" style="font-size:11px;">正面视图 (Front)</label>
+                  <input type="text" id="edit-pet-three-front" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="edit-pet-three-side" style="font-size:11px;">侧面视图 (Side)</label>
+                  <input type="text" id="edit-pet-three-side" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="edit-pet-three-back" style="font-size:11px;">背面视图 (Back)</label>
+                  <input type="text" id="edit-pet-three-back" class="form-control">
                 </div>
               </div>
 
